@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" th:lang="#{locale.lang}">
+<head th:replace="fragments/header :: head (title = #{title.edit})"></head>
+<body onload="connect()">
+<nav th:replace="fragments/navbar :: navbar"></nav>
+<main>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col col-sm-12 col-lg-8">
+                <div class="row" style="margin: 30px 30px 0px 30px;">
+                    <div class="col-sm">
+                        <h4 class="title float-sm-left"><span th:text="#{share.note_shared_by}"></span> <span
+                                th:text="${note.owner.getUsername()}"></span></h4>
+                    </div>
+                </div>
+                <div class="row justify-content-center" th:if="${save_success}">
+                    <div class="col" style="margin: 0px 30px 0px 30px">
+                        <div class="alert alert-success" role="alert" th:text="#{note.alert.save_success}"></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm">
+                        <div class="card" style="margin: 0px 30px 30px 30px;">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col">
+                                        <form action="#" th:object="${note}"
+                                              th:action="@{'/share/note/' + ${note.id} + '/edit'}"
+                                              method="post">
+                                            <input type="hidden" th:field="*{id}"/>
+                                            <div class="form-group">
+                                                <input type="text" class="form-control"
+                                                       th:attr="readonly=${permission.toString() == 'READ_ONLY'} ? 'readonly' : null"
+                                                       th:field="*{title}" th:placeholder="#{enter_title}" required/>
+                                            </div>
+                                            <div class="form-group">
+                                    <textarea class="form-control" rows="5"
+                                              th:attrappend="readonly=${permission.toString() == 'READ_ONLY'} ? 'readonly' : null"
+                                              th:field="*{content}" th:placeholder="#{enter_note}" required></textarea>
+                                            </div>
+                                            <div class="dropdown float-sm-left">
+                                                <button class="btn btn-outline-secondary dropdown-toggle" type="button"
+                                                        id="dropdownMenuButton" data-toggle="dropdown"
+                                                        aria-haspopup="true"
+                                                        aria-expanded="false" th:text="#{export}">
+                                                    Export
+                                                </button>
+                                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                    <a class="dropdown-item"
+                                                       th:href="@{'~/export/note/' + *{id} + '/xml'}">XML</a>
+                                                    <a class="dropdown-item"
+                                                       th:href="@{'~/export/note/' + *{id} + '/json'}">JSON</a>
+                                                    <a class="dropdown-item"
+                                                       th:href="@{'~/export/note/' + *{id} + '/docx'}">Word
+                                                        (.docx)</a>
+                                                </div>
+                                            </div>
+                                            <input th:id="submitSaveButton"
+                                                   class="btn btn-primary float-sm-right" type="submit"
+                                                   th:if="${permission.toString() != 'READ_ONLY'}"
+                                                   th:value="#{note.save}"/>
+                                        </form>
+                                    </div>
+                                </div>
+                                <div class="row" th:if="${permission.toString() == 'READ_EDIT'}">
+                                    <div class="col" style="margin: 10px 0 -10px 0;">
+                                        <div class="custom-control custom-switch">
+                                            <input type="checkbox" class="custom-control-input" id="live"
+                                                   onclick="switchConnected()">
+                                            <label class="custom-control-label" for="live">Live collaborative
+                                                editing</label>
+                                        </div>
+                                    </div>
+                                    <div class="col" style="margin: 10px 0 -30px 0;">
+                                        <p class="text-muted float-sm-right" id="autosaved" style="display: none;" th:text="#{note.saving}">
+                                            Autosaved...</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<div th:replace="fragments/scripts :: scripts"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.4.0/sockjs.min.js" th:if="${permission.toString() == 'READ_EDIT'}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js" th:if="${permission.toString() == 'READ_EDIT'}"></script>
+<script th:src="@{/js/coediting.js}" type="text/javascript" th:if="${permission.toString() == 'READ_EDIT'}"></script>
+</body>
+</html>

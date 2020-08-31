@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html th:lang="#{locale.lang}" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: head (title = #{title.index})"></head>
+<body>
+<nav th:replace="fragments/navbar :: navbar"></nav>
+<main>
+    <div class="container-fluid">
+        <div class="row justify-content-md-center">
+            <div class="col col-sm-12 col-lg-8">
+                <div class="row" style="margin-top: 30px;">
+                    <div class="col-sm-6">
+                        <h2 class="title float-sm-left" th:text="#{notes}"></h2>
+                    </div>
+                    <div class="col-sm-6">
+                        <a class="btn btn-outline-primary float-sm-right" th:href="@{'/note/add/'}"
+                           th:text="#{add}"></a>
+                    </div>
+                </div>
+                <h2 th:text="${error}"></h2>
+                <div class="row justify-content-center" th:if="${remove_success}">
+                    <div class="col" style="margin: 0px 30px -30px 30px">
+                        <div class="alert alert-success" role="alert" th:text="#{note.alert.remove_success}"></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm">
+                        <div class="jumbotron" th:if="${notes.isEmpty()}" style="margin: 30px;">
+                            <h1 class="display-5" th:text="#{note.jumbo.no_notes_found}">No notes found :(</h1>
+                            <p class="lead" th:text="#{note.jumbo.create_first_note}">Create your first note right
+                                now</p>
+                            <p class="lead">
+                                <a class="btn btn-primary btn-lg" th:href="@{'/note/add/'}" th:text="#{add}"></a>
+                            </p>
+                        </div>
+                        <!-- Note Cards -->
+                        <div class="card" style="margin: 10px 0 10px 0;" th:each="note: ${notes}">
+                            <div class="card-body">
+                                <h4 class="card-title" th:text="${note.title}"></h4>
+                                <h6 class="card-subtitle mb-2 text-muted">
+                                    <span style="font-size: 10px;"><span th:text="#{created}"></span> <span
+                                            th:text="${#temporals.format(note.creationDateTime, 'dd/MM/yyyy HH:mm')}"></span>,</span>
+                                    <span style="font-size: 10px;"><span th:text="#{modified}"></span> <span
+                                            th:text="${#temporals.format(note.modificationDateTime, 'dd/MM/yyyy HH:mm')}"></span></span>
+                                </h6>
+                                <pre><p class="card-text" th:text="${note.content}"></p></pre>
+                                <div class="btn-group btn-group-sm float-sm-right">
+                                    <button type="button" class="card-link btn btn-outline-danger"
+                                       th:onclick="'summonRemoveModalForNote(' + ${note.id} + ')'" th:text="#{remove}"></button>
+                                    <a class="card-link btn btn-outline-primary"
+                                       th:href="@{'/note/' + ${note.id} + '/edit'}" th:text="#{edit}"></a>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- End Note Cards -->
+                        <!-- Remove Modal -->
+                        <div class="modal fade" id="removeModal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="removeModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="removeModalLabel" th:text="#{note.modal.delete.r_u_sure}">Are you sure?</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body" th:text="#{note.modal.delete.message}" style="font-size: 0.9rem">
+                                        Do you really want to delete this note? This action cannot be undone! This note will also be removed from all users you shared this note with. This is your last chance!
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal" th:text="#{note.modal.delete.cancel}">Cancel</button>
+                                        <a class="btn btn-danger" id="removeModalRemoveButton" href="" th:text="#{note.modal.delete.delete}"></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- End Remove Modal -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<div th:replace="fragments/scripts :: scripts"></div>
+<!-- Remove Modal Script -->
+<script>
+    function summonRemoveModalForNote(noteId) {
+        $("#removeModal").modal("show");
+        $("#removeModalRemoveButton").attr("href", "/note/" + noteId + "/remove");
+    }
+</script>
+</body>
+</html>

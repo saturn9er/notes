@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" th:lang="#{locale.lang}">
+<head th:replace="fragments/header :: head (title = 'Registration')"></head>
+<body>
+<nav th:replace="fragments/navbar :: navbar"></nav>
+<div class="container">
+    <main>
+        <div class="container">
+            <div class="row justify-content-md-center" style="margin: 30px 0px 10px 0px;">
+                <div class="col-lg-6">
+                    <h2 class="title float-sm-left" th:text="#{auth.registration}"></h2>
+                </div>
+            </div>
+            <div class="row justify-content-md-center">
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <form action="#" th:object="${userForm}" th:action="@{'/registration/'}" method="post">
+                                <div class="form-group">
+                                    <label for="username" th:text="#{auth.username}">Username</label>
+                                    <input type="text" class="form-control" th:classappend="${#fields.hasErrors('username')} ? 'is-invalid' : ''" id="username" aria-describedby="usernameHelp" th:field="*{username}" th:placeholder="#{auth.username_placeholder}" required>
+                                    <small id="usernameHelp" class="form-text text-muted" th:if="${!#fields.hasErrors('username')}" th:text="#{auth.username_help}"></small>
+                                    <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="password" th:text="#{auth.password}">Password</label>
+                                    <input type="password" class="form-control" th:classappend="${#fields.hasErrors('password')} ? 'is-invalid' : ''" id="password" aria-describedby="passwordHelp" th:field="*{password}" th:placeholder="#{auth.password_placeholder}" required>
+                                    <small id="passwordHelp" class="form-text text-muted" th:if="${!#fields.hasErrors('password')}" th:text="#{auth.password_help}"></small>
+                                    <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="password_confirm" th:text="#{auth.password_confirm}">Password confirmation</label>
+                                    <input type="password" class="form-control" th:classappend="${#fields.hasErrors('passwordConfirm')} ? 'is-invalid' : ''" id="password_confirm" th:field="*{passwordConfirm}" th:placeholder="#{auth.password_confirm_placeholder}" required>
+                                    <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('passwordConfirm')}" th:errors="*{passwordConfirm}"></div>
+                                </div>
+                                <input class="btn btn-primary float-sm-right" type="submit" th:value="#{auth.sign_up}" />
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+<div th:replace="fragments/scripts :: scripts"></div>
+</body>
+</html>

@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" th:lang="#{locale.lang}">
+<head th:replace="fragments/header :: head (title = #{title.edit})"></head>
+<body onload="connect()">
+<nav th:replace="fragments/navbar :: navbar"></nav>
+<main>
+    <div class="">
+        <div class="row justify-content-center">
+            <div class="col col-sm-12 col-lg-8">
+                <div class="row" style="margin: 30px 30px 0px 30px;">
+                    <div class="col-sm">
+                        <h2 class="title float-sm-left" th:text="#{edit_note}"></h2>
+                    </div>
+                </div>
+                <div class="row justify-content-center" th:if="${save_success}">
+                    <div class="col" style="margin: 0px 30px -30px 30px">
+                        <div class="alert alert-success" role="alert" th:text="#{note.alert.save_success}"></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm">
+                        <div class="card" style="margin: 30px;">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col">
+                                        <form action="#" th:object="${note}" th:action="@{'/note/edit'}" method="post">
+                                            <input type="hidden" th:field="*{id}"/>
+                                            <div class="form-group">
+                                                <input type="text" class="form-control" th:field="*{title}"
+                                                       th:placeholder="#{enter_title}" required/>
+                                            </div>
+                                            <div class="form-group">
+                                        <textarea class="form-control" rows="5" th:field="*{content}"
+                                                  th:placeholder="#{enter_note}" required></textarea>
+                                            </div>
+                                            <div class="dropdown float-sm-left">
+                                                <button class="btn btn-outline-secondary dropdown-toggle" type="button"
+                                                        id="dropdownMenuButton" data-toggle="dropdown"
+                                                        aria-haspopup="true"
+                                                        aria-expanded="false" th:text="#{export}">
+                                                    Export
+                                                </button>
+                                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                    <a class="dropdown-item"
+                                                       th:href="@{'~/export/note/' + *{id} + '/xml'}">XML</a>
+                                                    <a class="dropdown-item"
+                                                       th:href="@{'~/export/note/' + *{id} + '/json'}">JSON</a>
+                                                    <a class="dropdown-item"
+                                                       th:href="@{'~/export/note/' + *{id} + '/docx'}">Word
+                                                        (.docx)</a>
+                                                </div>
+                                            </div>
+                                            <div class="btn-group btn-group-sm float-sm-right">
+                                                <button class="card-link btn btn-outline-danger"
+                                                   th:type="button"
+                                                   onclick="$('#removeModal').modal('show');"
+                                                   th:text="#{remove}"></button>
+                                                <input th:id="submitSaveButton"
+                                                       th:value="#{note.save}"
+                                                       th:attr="data-content=#{note.popover.shortcut_tip}"
+                                                       data-placement="bottom"
+                                                       class="btn btn-primary"
+                                                       type="submit"/>
+                                            </div>
+                                            <!-- Remove Modal -->
+                                            <div class="modal fade" id="removeModal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="removeModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="removeModalLabel" th:text="#{note.modal.delete.r_u_sure}">Are you sure?</h5>
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body" th:text="#{note.modal.delete.message}" style="font-size: 0.9rem">
+                                                            Do you really want to delete this note? This action cannot be undone! This note will also be removed from all users you shared this note with. This is your last chance!
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <div class="btn-group">
+                                                                <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal" th:text="#{note.modal.delete.cancel}">Cancel</button>
+                                                                <a class="btn btn-danger btn-sm" th:href="@{'/note/' + ${note.id} + '/remove'}" th:text="#{note.modal.delete.delete}"></a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- End Remove Modal -->
+                                        </form>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col" style="margin: 10px 0 -10px 0;">
+                                        <div class="custom-control custom-switch">
+                                            <input type="checkbox" class="custom-control-input" id="live"
+                                                   onclick="switchConnected()">
+                                            <label class="custom-control-label" for="live">Live collaborative
+                                                editing</label>
+                                        </div>
+                                    </div>
+                                    <div class="col" style="margin: 10px 0 -30px 0;">
+                                        <p class="text-muted float-sm-right" id="autosaved" style="display: none;" th:text="#{note.saving}">
+                                            Autosaved...</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row justify-content-center" th:if="${grant_success}">
+                    <div class="col" style="margin: 0px 30px 0px 30px">
+                        <div class="alert alert-success" role="alert" th:text="#{note.alert.grant_success}"></div>
+                    </div>
+                </div>
+                <div class="row justify-content-center" th:if="${revoke_success}">
+                    <div class="col" style="margin: 0px 30px 0px 30px">
+                        <div class="alert alert-success" role="alert" th:text="#{note.alert.revoke_success}"></div>
+                    </div>
+                </div>
+                <div class="row justify-content-center" th:if="${username_not_found_warning}">
+                    <div class="col" style="margin: 0px 30px 0px 30px">
+                        <div class="alert alert-warning" role="alert"
+                             th:text="#{note.alert.username_not_found_warning}"></div>
+                    </div>
+                </div>
+                <div class="row" style="margin: 0px 30px 0px 30px;">
+                    <div class="col-sm-3">
+                        <h4 class="subtitle float-sm-left" th:text="#{share.sharing}"></h4>
+                    </div>
+                    <div class="col-sm-9">
+                        <form class="form-inline float-sm-right" th:object="${shareDto}"
+                              th:action="@{'~/share/note/' + ${note.id}}" method="post">
+                            <input id="trustee" type="text" class="form-control mb-2 mr-sm-2"
+                                   th:field="*{trusteeUsername}"
+                                   th:placeholder="#{share.trustee_username_placeholder}" th:required="required">
+
+                            <select id="permissions" class="form-control mb-2 mr-sm-2" th:field="*{permission}"
+                                    th:required="required">
+                                <option th:value="READ_ONLY" th:text="#{permissions.READ_ONLY}">Read</option>
+                                <option th:value="READ_EDIT" th:text="#{permissions.READ_EDIT}">Read and edit</option>
+                            </select>
+
+                            <input id="submit" class="btn btn-success float-sm-right mb-2" type="submit"
+                                   th:value="#{share.share_button}"/>
+                        </form>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm">
+                        <div class="" style="margin: 15px 30px;">
+                            <table class="table table-hover" th:if="${!shares.isEmpty()}">
+                                <thead>
+                                <tr>
+                                    <th scope="col" th:text="#{share.username}">Username</th>
+                                    <th scope="col" th:text="#{share.permission}">Permission</th>
+                                    <th scope="col"></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="share: ${shares}">
+                                    <td th:text="${share.trustee.getUsername()}"></td>
+                                    <td th:text="#{'permissions.' + ${share.permissions.toString()}}"></td>
+                                    <td>
+                                        <form th:action="@{'/share/note/' + ${note.id} + '/delete/' + ${share.id}}"
+                                              method="post">
+                                            <button class="btn btn-danger btn-sm float-sm-right" th:type="submit"
+                                                    th:text="#{share.revoke_button}">Revoke
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div id="accordion">
+                            <div class="card" style="margin: 30px;">
+                                <div class="card-header" id="headingOne">
+                                    <h5 class="mb-0">
+                                        <button class="btn btn-link collapsed" data-toggle="collapse"
+                                                data-target="#collapseOne"
+                                                aria-expanded="true" aria-controls="collapseOne"
+                                                th:text="#{history.changes_history}">
+                                            Changes history
+                                        </button>
+                                    </h5>
+                                </div>
+
+                                <div id="collapseOne" class="collapse" aria-labelledby="headingOne"
+                                     data-parent="#accordion">
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item" th:each="change: ${note.history}">
+                                            <h5 class="title" th:text="${change.title}"></h5>
+                                            <pre><p th:text="${change.content}"></p></pre>
+                                            <span style="font-size: 10px;"><span
+                                                    th:text="#{history.added}"></span> <span
+                                                    th:text="${#temporals.format(change.modificationDateTime, 'dd/MM/yyyy HH:mm')}"></span>,</span>
+                                            <span style="font-size: 10px;"><span
+                                                    th:text="#{history.submitted_by}"></span> <span
+                                                    th:text="${change.submitter.getUsername()}"></span></span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<div th:replace="fragments/scripts :: scripts"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.4.0/sockjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+<script th:src="@{/js/coediting.js}" type="text/javascript"></script>
+</body>
+</html>

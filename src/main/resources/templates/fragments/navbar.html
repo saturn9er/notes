@@ -1,0 +1,51 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head></head>
+<body>
+<nav class="navbar navbar-expand-sm navbar-dark bg-primary" th:fragment="navbar">
+    <a class="navbar-brand" th:href="@{/note}" th:text="#{app_name}"></a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown"
+            aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item dropdown">
+                <a aria-expanded="false" aria-haspopup="true" class="nav-link dropdown-toggle" data-toggle="dropdown"
+                   href="#"
+                   id="navbarDropdown" role="button" th:text="#{locale.language}">
+                    English</a>
+                <div aria-labelledby="navbarDropdown" class="dropdown-menu">
+                    <a class="dropdown-item" href="?lang=en">English</a>
+                    <a class="dropdown-item" href="?lang=ru">Русский</a>
+                </div>
+            </li>
+        </ul>
+        <ul class="navbar-nav nav ml-auto">
+            <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
+                <a class="nav-link" th:href="@{~/note}" th:text="#{note.my_notes}"></a>
+            </li>
+            <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
+                <a class="nav-link" th:href="@{~/share}" th:text="#{share.sharing}"></a>
+            </li>
+            <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
+                <a aria-expanded="false" aria-haspopup="true" class="nav-link dropdown-toggle" data-toggle="dropdown"
+                   href="#"
+                   id="navbarDropdown2" role="button" sec:authentication="name">
+                    Roman</a>
+                <div aria-labelledby="navbarDropdown2" class="dropdown-menu">
+                    <form id="logoutForm" method="POST" th:action="@{~/logout}"></form>
+                    <a class="dropdown-item" onclick="document.forms['logoutForm'].submit()"
+                       th:text="#{auth.log_out}"></a>
+                </div>
+            </li>
+            <li class="nav-item" sec:authorize="isAnonymous()">
+                <a class="nav-link" th:href="@{~/login}" th:text="#{auth.log_in}"></a>
+            </li>
+            <li class="nav-item" sec:authorize="isAnonymous()">
+                <a class="nav-link" th:href="@{~/registration}" th:text="#{auth.sign_up}"></a>
+            </li>
+        </ul>
+    </div>
+</nav>
+</body>
+</html>

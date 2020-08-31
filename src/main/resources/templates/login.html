@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" th:lang="#{locale.lang}">
+<head th:replace="fragments/header :: head (title = 'Login')"></head>
+<body>
+<nav th:replace="fragments/navbar :: navbar"></nav>
+<div class="container">
+    <main>
+        <div class="container">
+            <div class="row justify-content-md-center" style="margin: 30px 0px 10px 0px;">
+                <div class="col-lg-6">
+                    <h2 class="title float-sm-left" th:text="#{auth.login}"></h2>
+                </div>
+            </div>
+            <div class="row justify-content-md-center">
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="alert alert-danger" role="alert" th:if="${error}" th:text="#{auth.login_error}">
+                                Login/password pair is incorrect!
+                            </div>
+                            <form action="#" th:action="@{'/login/'}" method="post">
+                                <div class="form-group">
+                                    <label for="username" th:text="#{auth.username}">Username</label>
+                                    <input type="text" class="form-control" id="username" name="username" th:placeholder="#{auth.username_placeholder}" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="password" th:text="#{auth.password}">Password</label>
+                                    <input type="password" class="form-control" id="password" name="password" aria-describedby="passwordHelp" th:placeholder="#{auth.password_placeholder}" required>
+                                </div>
+                                <input class="btn btn-primary float-sm-right" type="submit" th:value="#{auth.log_in}" />
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+<div th:replace="fragments/scripts :: scripts"></div>
+</body>
+</html>

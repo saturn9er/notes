@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" th:lang="#{locale.lang}">
+<head th:replace="error/fragments/header :: head (title = '404')"></head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="xs-12 md-6 mx-auto">
+            <div id="countUp">
+                <div class="number" style="font-size: 4em; font-weight: 500;" data-count="404">0</div>
+                <div class="text" th:text="#{error.not_found_404}">Not found</div>
+            </div>
+        </div>
+    </div>
+</div>
+<div th:replace="error/fragments/scripts :: scripts"></div>
+</body>
+</html>
