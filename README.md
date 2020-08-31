@@ -1,7 +1,7 @@
 # notes
 📓Yet another Spring app for taking, sharing, and collaborating on notes 🍃
 
-**Features highlight**
+**Features highlights**
 * Create, read, update, and delete notes
 * See changes history of each note
 * Share your notes with other users using a flexible permissions system
